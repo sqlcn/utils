@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>开关电源IC电阻计算器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>开关电源IC电阻计算器</h2>
+        <label for="vout">输出电压 Vout (V):</label>
+        <input type="number" id="vout" placeholder="输入输出电压">
+        <label for="r1">上位电阻 R1 (Ω):</label>
+        <input type="number" id="r1" placeholder="输入上位电阻">
+        <label for="r2">下位电阻 R2 (Ω):</label>
+        <input type="number" id="r2" placeholder="输入下位电阻">
+        <button onclick="calculate()">计算</button>
+        <script>
+            const inputs = document.querySelectorAll('input');
+            inputs.forEach(input => {
+                input.addEventListener('input', () => {
+                    const vout = parseFloat(document.getElementById('vout').value);
+                    const r1 = parseFloat(document.getElementById('r1').value);
+                    const r2 = parseFloat(document.getElementById('r2').value);
+                    if (!isNaN(vout) + !isNaN(r1) + !isNaN(r2) >= 2) {
+                        calculate();
+                    }
+                });
+            });
+        </script>
+        <div class="result">
+            <p id="resultText"></p>
+        </div>
+    </div>
+    <script>
+        function calculate() {
+            const vout = parseFloat(document.getElementById('vout').value);
+            const r1 = parseFloat(document.getElementById('r1').value);
+            const r2 = parseFloat(document.getElementById('r2').value);
+            let result = '';
+
+            if (!isNaN(vout) && !isNaN(r1) && isNaN(r2)) {
+                const r2 = (0.6 * r1) / (vout - 0.6);
+                result = `计算的下位电阻 R2: ${r2.toFixed(2)} Ω`;
+            } else if (!isNaN(vout) && isNaN(r1) && !isNaN(r2)) {
+                const r1 = ((vout / 0.6) - 1) * r2;
+                result = `计算的上位电阻 R1: ${r1.toFixed(2)} Ω`;
+            } else if (isNaN(vout) && !isNaN(r1) && !isNaN(r2)) {
+                const vout = 0.6 * (1 + r1 / r2);
+                result = `计算的输出电压 Vout: ${vout.toFixed(2)} V`;
+            } else {
+                result = '请确保输入两个已知值！';
+            }
+
+            document.getElementById('resultText').textContent = result;
+        }
+    </script>
+</body>
+</html>
